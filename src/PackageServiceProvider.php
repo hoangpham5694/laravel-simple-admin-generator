@@ -5,6 +5,7 @@ use HoangPhamDev\SimpleAdminGenerator\Console\GenerateControllerCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\GenerateHomeControllerCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\GenerateUiCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\InstallCommand;
+use HoangPhamDev\SimpleAdminGenerator\Console\SeedAdminCommand;
 use HoangPhamDev\SimpleAdminGenerator\Http\Middleware\AuthAdmin;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,11 @@ class PackageServiceProvider extends ServiceProvider
         });
         $this->loadViewsFrom(__DIR__.'/resources/views', 'sag');
         if ($this->app->runningInConsole()) {
+            // Publish the package configuration to the host application.
+            $this->publishes([
+                __DIR__.'/../config/config.php' => config_path('sag.php'),
+            ], 'sag-config');
+
             // Publish assets
             $this->publishes([
                 __DIR__.'/resources/assets' => public_path('sag'),
@@ -63,7 +69,8 @@ class PackageServiceProvider extends ServiceProvider
                 InstallCommand::class,
                 GenerateControllerCommand::class,
                 GenerateUiCommand::class,
-                GenerateHomeControllerCommand::class
+                GenerateHomeControllerCommand::class,
+                SeedAdminCommand::class,
             ]);
         }
     }

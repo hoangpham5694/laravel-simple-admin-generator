@@ -40,7 +40,7 @@ class InstallCommand extends Command
 
         $this->info('Generating data...');
         Artisan::call('migrate');
-        Artisan::call('db:seed --class="HoangPhamDev\\\SimpleAdminGenerator\\\Database\\\Seeders\\\AdminSeeder"');
+        Artisan::call('sag:seed-admin');
 
         $this->info('Done');
     }

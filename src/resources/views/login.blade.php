@@ -17,7 +17,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <a>Simple <b>Admin</b> generation</a>
+        <a><b>{{ config('sag.page_name') }}</b></a>
     </div>
     <!-- /.login-logo -->
     <div class="card">
@@ -58,7 +58,13 @@
                 <div class="row mt-3">
                     <div class="col-8">
                         <div class="icheck-primary">
-                            <input type="checkbox" id="remember">
+                            <input
+                                type="checkbox"
+                                id="remember"
+                                name="remember"
+                                value="1"
+                                @checked(old('remember'))
+                            >
                             <label for="remember">
                                 Remember Me
                             </label>

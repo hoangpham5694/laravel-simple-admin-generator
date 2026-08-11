@@ -43,6 +43,19 @@ Run following command to install.
 ```
 php artisan sag:install
 ```
+
+Publish the package configuration:
+```
+php artisan vendor:publish --tag=sag-config
+```
+
+This creates `config/sag.php`, where you can customize values such as `page_name`.
+
+Seed the default administrator account:
+```
+php artisan sag:seed-admin
+```
+
 Open `http://localhost/admin/login` in browser,use email `admin@sag.com` and password `secret` to login.
 
 Edit your dashboard at `resources/views/sag/dashboard.blade.php`
