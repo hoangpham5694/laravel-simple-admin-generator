@@ -6,11 +6,14 @@ use HoangPhamDev\SimpleAdminGenerator\Console\GenerateHomeControllerCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\GenerateUiCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\InstallCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\SeedAdminCommand;
+use HoangPhamDev\SimpleAdminGenerator\Console\SeedMenuCommand;
 use HoangPhamDev\SimpleAdminGenerator\Http\Middleware\AuthAdmin;
+use HoangPhamDev\SimpleAdminGenerator\Services\AdminMenuManager;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\View;
 
 class PackageServiceProvider extends ServiceProvider
 {
@@ -49,6 +52,13 @@ class PackageServiceProvider extends ServiceProvider
             'model' => \HoangPhamDev\SimpleAdminGenerator\Models\Admin::class,
         ]);
 
+        View::composer('sag.layouts.sidebar', function ($view) {
+            $view->with(
+                'sagMenuItems',
+                $this->app->make(AdminMenuManager::class)->sidebarTree()
+            );
+        });
+
         $this->consoleConfiguration();
     }
 
@@ -57,8 +67,8 @@ class PackageServiceProvider extends ServiceProvider
     protected function routeConfiguration(): array
     {
         return [
-            'prefix' => 'admin',
-            'middleware' => 'web',
+            'prefix' => config('sag.prefix', 'admin'),
+            'middleware' => config('sag.middleware', ['web']),
         ];
     }
 
@@ -71,6 +81,7 @@ class PackageServiceProvider extends ServiceProvider
                 GenerateUiCommand::class,
                 GenerateHomeControllerCommand::class,
                 SeedAdminCommand::class,
+                SeedMenuCommand::class,
             ]);
         }
     }

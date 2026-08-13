@@ -14,7 +14,7 @@
 
 Requirements
 ------------
- - PHP >= 7.0.0
+ - PHP >= 8.1
  - Laravel >= 9.x
 
 ## Prerequisites
@@ -55,6 +55,14 @@ Seed the default administrator account:
 ```
 php artisan sag:seed-admin
 ```
+
+Seed the default admin menus:
+```
+php artisan migrate
+php artisan sag:seed-menu
+```
+
+The menu management screen is available at `/{sag.prefix}/menus` (by default, `/admin/menus`).
 
 Open `http://localhost/admin/login` in browser,use email `admin@sag.com` and password `secret` to login.
 

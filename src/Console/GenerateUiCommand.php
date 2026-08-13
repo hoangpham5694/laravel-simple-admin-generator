@@ -2,9 +2,12 @@
 
 namespace HoangPhamDev\SimpleAdminGenerator\Console;
 
+use HoangPhamDev\SimpleAdminGenerator\Enums\AdminMenuLinkType;
+use HoangPhamDev\SimpleAdminGenerator\Models\AdminMenuItem;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class GenerateUiCommand extends Command
@@ -12,32 +15,6 @@ class GenerateUiCommand extends Command
     protected $signature = 'sag:generate_ui {name}';
 
     protected $description = 'Generate ui';
-
-    const MENU_HTML = <<<EOF
-                <li class="nav-item {{ request()->is('admin/<URL_PATH>*') ? 'menu-is-opening menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->is('admin/<URL_PATH>*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-list"></i>
-                        <p>
-                            <PAGE_NAME>
-                            <i class="fas fa-angle-left right"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{route('<ROUTE_NAME_INDEX>')}}" class="nav-link {{ request()->is('admin/<URL_PATH>') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>List</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{route('<ROUTE_NAME_CREATE>')}}" class="nav-link {{ request()->is('admin/<URL_PATH>/create') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Create</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-        EOF;
 
     private function copyFile($file, $destination)
     {
@@ -64,11 +41,12 @@ class GenerateUiCommand extends Command
         $this->info('Generating controller');
         Artisan::call("sag:generate_controller $controllerName");
         $routeName = Str::lower($name);
+        $adminPrefix = trim((string) config('sag.prefix', 'admin'), '/');
 
         $this->info('Generating router');
         file_put_contents(
             './routes/web.php',
-            "\nRoute::get('/admin/$routeName', [\App\Http\Controllers\SAG\\$controllerName::class, 'index'])->middleware('admin')->name('sag.$routeName.index');\nRoute::get('/admin/$routeName/create', [\App\Http\Controllers\SAG\\$controllerName::class, 'create'])->middleware('admin')->name('sag.$routeName.create');\nRoute::get('/admin/$routeName/edit/{\$id}', [\App\Http\Controllers\SAG\\$controllerName::class, 'edit'])->middleware('admin')->name('sag.$routeName.edit');\n",
+            "\nRoute::get('/$adminPrefix/$routeName', [\App\Http\Controllers\SAG\\$controllerName::class, 'index'])->middleware('admin')->name('sag.$routeName.index');\nRoute::get('/$adminPrefix/$routeName/create', [\App\Http\Controllers\SAG\\$controllerName::class, 'create'])->middleware('admin')->name('sag.$routeName.create');\nRoute::get('/$adminPrefix/$routeName/edit/{\$id}', [\App\Http\Controllers\SAG\\$controllerName::class, 'edit'])->middleware('admin')->name('sag.$routeName.edit');\n",
             FILE_APPEND
         );
 
@@ -85,15 +63,22 @@ class GenerateUiCommand extends Command
         file_put_contents(resource_path('views/sag/' . $routeName . '/edit.blade.php'), $content);
 
 
-        $content = file_get_contents(resource_path('views/sag/layouts/sidebar.blade.php'));
-
-        $menuHtml = Str::replace('<URL_PATH>', $routeName, self::MENU_HTML);
-        $menuHtml = Str::replace('<PAGE_NAME>', $name, $menuHtml);
-        $menuHtml = Str::replace('<ROUTE_NAME_INDEX>', "sag.$routeName.index", $menuHtml);
-        $menuHtml = Str::replace('<ROUTE_NAME_CREATE>', "sag.$routeName.create", $menuHtml);
-        $menuHtml .= PHP_EOL."<!--DO NOT REMOVE--><!--MENU_GENERATION--><!--DO NOT REMOVE-->";
-        $content = Str::replace('<!--DO NOT REMOVE--><!--MENU_GENERATION--><!--DO NOT REMOVE-->', PHP_EOL.$menuHtml, $content);
-        file_put_contents(resource_path('views/sag/layouts/sidebar.blade.php'), $content);
+        if (Schema::hasTable('admin_menu_items')) {
+            AdminMenuItem::query()->firstOrCreate(
+                ['key' => Str::slug($name, '_')],
+                [
+                    'title' => $name,
+                    'icon' => 'fas fa-list',
+                    'sort_order' => ((int) AdminMenuItem::query()
+                        ->whereNull('parent_id')
+                        ->max('sort_order')) + 10,
+                    'link_type' => AdminMenuLinkType::Route,
+                    'target' => "sag.$routeName.index",
+                    'target_window' => '_self',
+                    'is_active' => true,
+                ]
+            );
+        }
 
         $this->info('Done');
     }
