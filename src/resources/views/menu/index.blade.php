@@ -1,7 +1,7 @@
-@extends('sag.layouts.app')
+@extends('sag::layouts.app')
 
 @push('style')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.17/themes/default/style.min.css">
+    <link rel="stylesheet" href="{{ asset('sag/plugins/jstree/themes/default/style.min.css') }}">
     <style>
         #admin-menu-tree {
             min-height: 320px;
@@ -176,16 +176,9 @@
 @endsection
 
 @push('script')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.17/jstree.min.js"></script>
+    <script src="{{ asset('sag/plugins/jstree/jstree.min.js') }}"></script>
     <script>
         $(function () {
-            if ($('link[href*="jstree"]').length === 0) {
-                $('<link>', {
-                    rel: 'stylesheet',
-                    href: 'https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.17/themes/default/style.min.css'
-                }).appendTo('head');
-            }
-
             const manager = $('#menu-manager');
             const treeElement = $('#admin-menu-tree');
             const csrfToken = '{{ csrf_token() }}';

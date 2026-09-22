@@ -47,6 +47,10 @@ class PackageServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/resources/views/components/sag-form' => resource_path('views/components/sag-form'),
             ], 'sag-form-components');
+
+            $this->publishes([
+                __DIR__.'/resources/views/layouts' => resource_path('views/vendor/sag/layouts'),
+            ], 'sag-layouts');
         }
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $router = $this->app->make(Router::class);

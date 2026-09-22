@@ -18,11 +18,11 @@
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
     <!-- Navbar -->
-    @include('sag.layouts.navbar')
+    @include('sag::layouts.navbar')
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-    @include('sag.layouts.sidebar')
+    @include('sag::layouts.sidebar')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
 

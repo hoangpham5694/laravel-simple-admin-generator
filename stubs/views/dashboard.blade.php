@@ -1,4 +1,4 @@
-@extends('sag.layouts.app')
+@extends('sag::layouts.app')
 @section('content')
     @include('sag.components.page_header')
     <section class="content">

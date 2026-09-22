@@ -117,6 +117,16 @@ and `--model-class` is available only with `--table`. Existing generated files
 are protected unless `--force` is passed. Add `--skip-menu` to omit the admin
 menu item.
 
+### Layout customization
+
+Layouts are loaded directly from the package as `sag::layouts.*`; `sag:install`
+does not copy them into the application. To override them, publish a copy and
+edit it under `resources/views/vendor/sag/layouts`:
+
+```bash
+php artisan vendor:publish --tag=sag-layouts
+```
+
 ### Form components
 
 The package includes server-rendered Bootstrap/AdminLTE form components. They
