@@ -98,6 +98,25 @@ Your functionality files will be generated following the structure below. Open a
             ┣📜index.blade.php
 ```
 
+### Generate CRUD from a model or table
+
+Generate a complete controller, routes, views, and (for a table source) an
+Eloquent model. The generated form selects `x-sag-form.*` controls from the
+database column types and supports list, search, create, edit, update, and
+delete operations.
+
+```bash
+php artisan sag:generate_crud --model=Employee
+php artisan sag:generate_crud --table=employees
+php artisan sag:generate_crud --table=employees --route-name=staff-members --controller=StaffMemberController --model-class=App\Models\StaffMember
+```
+
+Use exactly one of `--model` or `--table`. Optional `--route-name` must be
+kebab-case; `--controller` must be a StudlyCase name ending in `Controller`;
+and `--model-class` is available only with `--table`. Existing generated files
+are protected unless `--force` is passed. Add `--skip-menu` to omit the admin
+menu item.
+
 ### Form components
 
 The package includes server-rendered Bootstrap/AdminLTE form components. They

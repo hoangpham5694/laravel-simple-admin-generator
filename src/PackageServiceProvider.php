@@ -4,6 +4,7 @@ namespace HoangPhamDev\SimpleAdminGenerator;
 use HoangPhamDev\SimpleAdminGenerator\Console\GenerateControllerCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\GenerateHomeControllerCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\GenerateUiCommand;
+use HoangPhamDev\SimpleAdminGenerator\Console\GenerateCrudCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\InstallCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\SeedAdminCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\SeedMenuCommand;
@@ -87,6 +88,7 @@ class PackageServiceProvider extends ServiceProvider
                 InstallCommand::class,
                 GenerateControllerCommand::class,
                 GenerateUiCommand::class,
+                GenerateCrudCommand::class,
                 GenerateHomeControllerCommand::class,
                 SeedAdminCommand::class,
                 SeedMenuCommand::class,

@@ -4,6 +4,8 @@ namespace HoangPhamDev\SimpleAdminGenerator\Tests;
 
 use HoangPhamDev\SimpleAdminGenerator\PackageServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
@@ -55,5 +57,11 @@ abstract class TestCase extends Orchestra
             ->name('example.route');
 
         $this->artisan('migrate')->run();
+
+        // MySQL test databases persist between PHPUnit processes. Reset only
+        // package-owned records so test cases remain isolated.
+        if (Schema::hasTable('admin_menu_items')) {
+            DB::table('admin_menu_items')->delete();
+        }
     }
 }
