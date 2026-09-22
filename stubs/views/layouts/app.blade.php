@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{asset('sag/dist/css/adminlte.min.css')}}">
     <link rel="stylesheet" href="{{asset('sag/plugins/toastr/toastr.css')}}">
     <link rel="stylesheet" href="{{asset('sag/plugins/sweetalert2/sweetalert2.css')}}">
+    @stack('style')
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">

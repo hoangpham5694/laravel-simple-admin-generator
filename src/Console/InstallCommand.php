@@ -24,15 +24,18 @@ class InstallCommand extends Command
     }
     public function handle()
     {
+        $adminPrefix = trim((string) config('sag.prefix', 'admin'), '/');
+
         $this->info('Installing Admin');
         $this->info('Generating layout...');
         $this->createDirectory(resource_path('views/sag'));
         $this->copyDirectory(__DIR__.'/../../stubs/views', resource_path('views/sag'));
         $this->createDirectory(public_path('sag'));
         $this->copyDirectory(__DIR__.'/../../stubs/public', public_path('sag'));
+        $this->copyDirectory(__DIR__.'/../resources/assets', public_path('sag'));
         file_put_contents(
             './routes/web.php',
-            "\nRoute::middleware(['admin'])->group(function () {\n Route::get('/admin/dashboard', [\App\Http\Controllers\SAG\HomeController::class, 'dashboard'])->name('sag.dashboard');\n});\n",
+            "\nRoute::middleware(['admin'])->group(function () {\n Route::get('/{$adminPrefix}/dashboard', [\App\Http\Controllers\SAG\HomeController::class, 'dashboard'])->name('sag.dashboard');\n});\n",
             FILE_APPEND
         );
 
@@ -40,7 +43,8 @@ class InstallCommand extends Command
 
         $this->info('Generating data...');
         Artisan::call('migrate');
-        Artisan::call('db:seed --class="HoangPhamDev\\\SimpleAdminGenerator\\\Database\\\Seeders\\\AdminSeeder"');
+        Artisan::call('sag:seed-admin');
+        Artisan::call('sag:seed-menu');
 
         $this->info('Done');
     }

@@ -17,6 +17,10 @@
     }
   },
 
+  "require": {
+    "php": ">=8.1"
+  },
+
   "extra": {
     "laravel": {
       "providers": [
@@ -25,6 +29,17 @@
     }
   },
   "require-dev": {
+    "orchestra/testbench": "^10.11",
+    "phpunit/phpunit": "^11.3",
     "squizlabs/php_codesniffer": "*"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "HoangPhamDev\\SimpleAdminGenerator\\Tests\\": "tests/",
+      "App\\": "tests/Fixtures/App/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
   }
 }

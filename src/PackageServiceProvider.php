@@ -4,12 +4,18 @@ namespace HoangPhamDev\SimpleAdminGenerator;
 use HoangPhamDev\SimpleAdminGenerator\Console\GenerateControllerCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\GenerateHomeControllerCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\GenerateUiCommand;
+use HoangPhamDev\SimpleAdminGenerator\Console\GenerateCrudCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\InstallCommand;
+use HoangPhamDev\SimpleAdminGenerator\Console\SeedAdminCommand;
+use HoangPhamDev\SimpleAdminGenerator\Console\SeedMenuCommand;
 use HoangPhamDev\SimpleAdminGenerator\Http\Middleware\AuthAdmin;
+use HoangPhamDev\SimpleAdminGenerator\Services\AdminMenuManager;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Blade;
 
 class PackageServiceProvider extends ServiceProvider
 {
@@ -24,11 +30,23 @@ class PackageServiceProvider extends ServiceProvider
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
         $this->loadViewsFrom(__DIR__.'/resources/views', 'sag');
+        // Files in resources/views/components/sag-form are available as
+        // <x-sag-form.*>. App components with the same path take precedence.
+        Blade::anonymousComponentPath(__DIR__.'/resources/views/components');
         if ($this->app->runningInConsole()) {
+            // Publish the package configuration to the host application.
+            $this->publishes([
+                __DIR__.'/../config/config.php' => config_path('sag.php'),
+            ], 'sag-config');
+
             // Publish assets
             $this->publishes([
                 __DIR__.'/resources/assets' => public_path('sag'),
             ], 'assets');
+
+            $this->publishes([
+                __DIR__.'/resources/views/components/sag-form' => resource_path('views/components/sag-form'),
+            ], 'sag-form-components');
         }
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $router = $this->app->make(Router::class);
@@ -43,6 +61,13 @@ class PackageServiceProvider extends ServiceProvider
             'model' => \HoangPhamDev\SimpleAdminGenerator\Models\Admin::class,
         ]);
 
+        View::composer('sag.layouts.sidebar', function ($view) {
+            $view->with(
+                'sagMenuItems',
+                $this->app->make(AdminMenuManager::class)->sidebarTree()
+            );
+        });
+
         $this->consoleConfiguration();
     }
 
@@ -51,8 +76,8 @@ class PackageServiceProvider extends ServiceProvider
     protected function routeConfiguration(): array
     {
         return [
-            'prefix' => 'admin',
-            'middleware' => 'web',
+            'prefix' => config('sag.prefix', 'admin'),
+            'middleware' => config('sag.middleware', ['web']),
         ];
     }
 
@@ -63,7 +88,10 @@ class PackageServiceProvider extends ServiceProvider
                 InstallCommand::class,
                 GenerateControllerCommand::class,
                 GenerateUiCommand::class,
-                GenerateHomeControllerCommand::class
+                GenerateCrudCommand::class,
+                GenerateHomeControllerCommand::class,
+                SeedAdminCommand::class,
+                SeedMenuCommand::class,
             ]);
         }
     }
