@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Blade;
 
 class PackageServiceProvider extends ServiceProvider
 {
@@ -28,6 +29,9 @@ class PackageServiceProvider extends ServiceProvider
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
         $this->loadViewsFrom(__DIR__.'/resources/views', 'sag');
+        // Files in resources/views/components/sag-form are available as
+        // <x-sag-form.*>. App components with the same path take precedence.
+        Blade::anonymousComponentPath(__DIR__.'/resources/views/components');
         if ($this->app->runningInConsole()) {
             // Publish the package configuration to the host application.
             $this->publishes([
@@ -38,6 +42,10 @@ class PackageServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/resources/assets' => public_path('sag'),
             ], 'assets');
+
+            $this->publishes([
+                __DIR__.'/resources/views/components/sag-form' => resource_path('views/components/sag-form'),
+            ], 'sag-form-components');
         }
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $router = $this->app->make(Router::class);

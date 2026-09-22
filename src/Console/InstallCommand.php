@@ -32,6 +32,7 @@ class InstallCommand extends Command
         $this->copyDirectory(__DIR__.'/../../stubs/views', resource_path('views/sag'));
         $this->createDirectory(public_path('sag'));
         $this->copyDirectory(__DIR__.'/../../stubs/public', public_path('sag'));
+        $this->copyDirectory(__DIR__.'/../resources/assets', public_path('sag'));
         file_put_contents(
             './routes/web.php',
             "\nRoute::middleware(['admin'])->group(function () {\n Route::get('/{$adminPrefix}/dashboard', [\App\Http\Controllers\SAG\HomeController::class, 'dashboard'])->name('sag.dashboard');\n});\n",

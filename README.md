@@ -98,6 +98,42 @@ Your functionality files will be generated following the structure below. Open a
             ┣📜index.blade.php
 ```
 
+### Form components
+
+The package includes server-rendered Bootstrap/AdminLTE form components. They
+work immediately after installing the package:
+
+```blade
+<x-sag-form.input name="email" label="Email" type="email" :value="$user->email ?? null" required />
+<x-sag-form.select name="role_id" label="Role" :options="$roles" placeholder="-- Choose a role --" />
+<x-sag-form.multi-select name="role_ids" label="Roles" :options="$roles" :selected="$user->roles->pluck('id')" />
+<x-sag-form.checkbox name="active" label="Active" :checked="$user->active" />
+<x-sag-form.file name="avatar" label="Avatar" accept="image/*" />
+<x-sag-form.datetime name="published_at" label="Published at" :value="$post->published_at?->format('Y-m-d H:i')" />
+```
+
+Available controls are `field`, `input`, `textarea`, `select`, `multi-select`,
+`checkbox`, `radio`, `file`, and `datetime`. Controls use Laravel `old()` input
+before their provided value, render the first validation error, and preserve
+custom HTML attributes. Options must be a value-to-label array or Collection;
+optgroups and object mappings are not supported in this phase. File upload
+forms must use `enctype="multipart/form-data"`.
+
+`datetime` lazily loads bundled Flatpickr assets and submits `Y-m-d H:i`
+(`Y-m-d H:i:S` when `enable-seconds` is set). Assets are installed by
+`php artisan sag:install`; without that installer publish them with:
+
+```bash
+php artisan vendor:publish --tag=assets --force
+```
+
+To customize component markup, publish the views and edit the corresponding
+file under `resources/views/components/sag-form`:
+
+```bash
+php artisan vendor:publish --tag=sag-form-components
+```
+
 Other
 ------------
 `simple-admin-generator` based on following plugins or services:

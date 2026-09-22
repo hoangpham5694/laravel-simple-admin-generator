@@ -3,6 +3,16 @@
     @include('sag.components.page_header')
     <section class="content">
         <div class="card">
+            <div class="card-header">
+                <div class="card-tools d-flex align-items-center">
+                    <form action="{{ route('sag.{{ViewFolder}}.index') }}" method="GET" class="form-inline mr-2">
+                        <label class="sr-only" for="search">Search</label>
+                        <input type="search" id="search" name="search" value="{{ $search ?? '' }}" class="form-control form-control-sm mr-2" placeholder="Search">
+                        <button type="submit" class="btn btn-default btn-sm">Search</button>
+                    </form>
+                    <a href="{{ route('sag.{{ViewFolder}}.create') }}" class="btn btn-primary btn-sm">Create</a>
+                </div>
+            </div>
             <div class="card-body p-0">
                 <table class="table table-striped projects">
                     <thead>

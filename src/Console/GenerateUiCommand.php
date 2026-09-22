@@ -62,6 +62,10 @@ class GenerateUiCommand extends Command
         $content = Str::replace('{{ViewFolder}}', $routeName, $content);
         file_put_contents(resource_path('views/sag/' . $routeName . '/edit.blade.php'), $content);
 
+        $content = file_get_contents(resource_path('views/sag/' . $routeName . '/index.blade.php'));
+        $content = Str::replace('{{ViewFolder}}', $routeName, $content);
+        file_put_contents(resource_path('views/sag/' . $routeName . '/index.blade.php'), $content);
+
 
         if (Schema::hasTable('admin_menu_items')) {
             AdminMenuItem::query()->firstOrCreate(
