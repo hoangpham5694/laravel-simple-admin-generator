@@ -1,4 +1,4 @@
-@extends('sag.layouts.app')
+@extends('sag::layouts.app')
 
 @push('style')
     <link rel="stylesheet" href="{{ asset('sag/plugins/jstree/themes/default/style.min.css') }}">
