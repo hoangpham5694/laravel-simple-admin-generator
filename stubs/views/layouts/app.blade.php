@@ -31,7 +31,8 @@
     <!-- /.content-wrapper -->
     <footer class="main-footer">
         <div class="float-right d-none d-sm-block">
-            <b>Version</b> 1.0.4
+            @php($sagVersion = class_exists(\Composer\InstalledVersions::class) ? \Composer\InstalledVersions::getPrettyVersion('hoangphamdev/simple-admin-generator') : null)
+            <b>Version</b> {{ $sagVersion ?: 'dev' }}
         </div>
         <strong>Copyright &copy; 2024 <a href="#">Simple admin generation</a>.</strong> All rights reserved.
     </footer>
