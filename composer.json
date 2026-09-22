@@ -1,6 +1,5 @@
 {
   "name": "hoangphamdev/simple-admin-generator",
-  "version": "1.0.4",
   "description": "SAG is a Laravel package designed to streamline the process of creating administrative panels for web applications. With this package, developers can quickly generate basic administrative interfaces for managing various aspects of their applications, such as user management, content management, settings, and more.",
   "type": "library",
   "license": "MIT",
