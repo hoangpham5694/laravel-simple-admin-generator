@@ -28,4 +28,22 @@ class PackageLayoutsTest extends TestCase
         $this->assertFileExists(resource_path('views/vendor/sag/layouts/navbar.blade.php'));
         $this->assertFileExists(resource_path('views/vendor/sag/layouts/sidebar.blade.php'));
     }
+
+    public function testSidebarComposerProvidesMenuItemsForPackageAndApplicationViews(): void
+    {
+        $applicationSidebar = resource_path('views/sag/layouts/sidebar.blade.php');
+        app(Filesystem::class)->ensureDirectoryExists(dirname($applicationSidebar));
+        app(Filesystem::class)->put($applicationSidebar, '{{ $sagMenuItems->count() }}');
+
+        $packageView = View::make('sag::layouts.sidebar');
+        $applicationView = View::make('sag.layouts.sidebar');
+
+        $packageView->render();
+        $applicationView->render();
+
+        $this->assertArrayHasKey('sagMenuItems', $packageView->getData());
+        $this->assertArrayHasKey('sagMenuItems', $applicationView->getData());
+
+        app(Filesystem::class)->deleteDirectory(resource_path('views/sag/layouts'));
+    }
 }

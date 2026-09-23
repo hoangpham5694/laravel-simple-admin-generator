@@ -65,7 +65,7 @@ class PackageServiceProvider extends ServiceProvider
             'model' => \HoangPhamDev\SimpleAdminGenerator\Models\Admin::class,
         ]);
 
-        View::composer('sag.layouts.sidebar', function ($view) {
+        View::composer(['sag.layouts.sidebar', 'sag::layouts.sidebar'], function ($view) {
             $view->with(
                 'sagMenuItems',
                 $this->app->make(AdminMenuManager::class)->sidebarTree()
