@@ -6,7 +6,7 @@
 
 
 <a href="https://packagist.org/packages/hoangphamdev/simple-admin-generator">
-    <img src="https://img.shields.io/badge/vesion-V1.0.4-blue" alt="Packagist">
+    <img src="https://img.shields.io/badge/vesion-V2.0.3-blue" alt="Packagist">
 </a>
 <a href="https://packagist.org/packages/hoangphamdev/simple-admin-generator">
     <img src="https://img.shields.io/badge/license-MIT-green" alt="Packagist">
