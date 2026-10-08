@@ -6,10 +6,13 @@ use HoangPhamDev\SimpleAdminGenerator\PackageServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Filesystem\Filesystem;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
 {
+    protected string $menuJsonDirectory;
+
     protected function getPackageProviders($app): array
     {
         return [PackageServiceProvider::class];
@@ -47,6 +50,9 @@ abstract class TestCase extends Orchestra
     {
         parent::setUp();
 
+        $this->menuJsonDirectory = sys_get_temp_dir() . '/sag-menu-' . bin2hex(random_bytes(8));
+        config(['sag.menu_json_path' => $this->menuJsonDirectory . '/menus.json']);
+
         if (!getenv('SAG_TEST_DB_DATABASE') && !extension_loaded('pdo_sqlite')) {
             $this->markTestSkipped('The pdo_sqlite extension is required for database tests.');
         }
@@ -62,6 +68,17 @@ abstract class TestCase extends Orchestra
         // package-owned records so test cases remain isolated.
         if (Schema::hasTable('admin_menu_items')) {
             DB::table('admin_menu_items')->delete();
+        }
+    }
+
+    protected function tearDown(): void
+    {
+        try {
+            if (isset($this->menuJsonDirectory)) {
+                (new Filesystem())->deleteDirectory($this->menuJsonDirectory);
+            }
+        } finally {
+            parent::tearDown();
         }
     }
 }

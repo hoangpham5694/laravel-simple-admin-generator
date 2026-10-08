@@ -6,7 +6,7 @@
 
 
 <a href="https://packagist.org/packages/hoangphamdev/simple-admin-generator">
-    <img src="https://img.shields.io/badge/vesion-V2.0.3-blue" alt="Packagist">
+    <img src="https://img.shields.io/badge/vesion-V2.0.4-blue" alt="Packagist">
 </a>
 <a href="https://packagist.org/packages/hoangphamdev/simple-admin-generator">
     <img src="https://img.shields.io/badge/license-MIT-green" alt="Packagist">
@@ -63,6 +63,60 @@ php artisan sag:seed-menu
 ```
 
 The menu management screen is available at `/{sag.prefix}/menus` (by default, `/admin/menus`).
+
+For existing installations, publish the menu's jsTree assets from the host application:
+
+```sh
+php artisan vendor:publish --provider="HoangPhamDev\SimpleAdminGenerator\PackageServiceProvider" --tag=sag-menu-assets --force
+```
+
+These assets are also included in `sag:install` and the `assets` publish tag.
+
+Menu creation, updates, deletion, seeding, and reordering automatically export all
+`AdminMenuItem` records to the host application's `resources/admin-menu-items.json`.
+The JSON is a flat array ordered by `sort_order` and `id`, including inactive items,
+with `parent_id` preserving the hierarchy. The directory and file are created when
+missing; the file is replaced atomically after the database transaction commits.
+
+To customize the absolute file path, publish the configuration with
+`php artisan vendor:publish --tag=sag-config` and set this in `config/sag.php`:
+
+```php
+'menu_json_path' => resource_path('menus/admin.json'),
+```
+
+To replace **all existing menu records** with the configured JSON file:
+
+```sh
+php artisan sag:sync-menu-from-json
+```
+
+The command is registered automatically by the package provider and reads
+`sag.menu_json_path` (default: `resources/admin-menu-items.json`). Use
+`--connection=your_connection` to select a database connection. It prints the
+imported item count and returns a nonzero exit code on failure.
+
+You can also call the service directly:
+
+```php
+$count = app(\HoangPhamDev\SimpleAdminGenerator\Services\AdminMenuJsonService::class)
+    ->syncFromJson();
+```
+
+This returns the number of imported items. The file must use the same flat array
+format as the export, including unique `id`, `key`, and `title` fields. IDs and
+parent relationships are preserved even if children appear before parents.
+An empty array (`[]`) clears all menu records. Missing files, invalid JSON,
+duplicate IDs/keys, missing parents, and cycles are rejected before deletion.
+Database replacement runs in a transaction and rolls back on failure. Import
+does not rewrite the source JSON. Pass a connection name to `syncFromJson()`
+when importing into a non-default database connection.
+
+Direct SQL, bulk Eloquent writes outside the menu service, and writes with model
+events disabled bypass automatic export. After such writes, call
+`app(\HoangPhamDev\SimpleAdminGenerator\Services\AdminMenuJsonService::class)->syncAfterCommit(
+    (new \HoangPhamDev\SimpleAdminGenerator\Models\AdminMenuItem())->getConnection()
+);` to refresh the file after commit.
 
 Open `http://localhost/admin/login` in browser,use email `admin@sag.com` and password `secret` to login.
 
