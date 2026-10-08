@@ -3,6 +3,7 @@
 namespace HoangPhamDev\SimpleAdminGenerator\Models;
 
 use HoangPhamDev\SimpleAdminGenerator\Enums\AdminMenuLinkType;
+use HoangPhamDev\SimpleAdminGenerator\Services\AdminMenuJsonService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,16 @@ use Illuminate\Support\Str;
 
 class AdminMenuItem extends Model
 {
+    protected static function booted(): void
+    {
+        $sync = static function (self $item): void {
+            app(AdminMenuJsonService::class)->syncAfterCommit($item->getConnection());
+        };
+
+        static::saved($sync);
+        static::deleted($sync);
+    }
+
     protected $fillable = [
         'parent_id',
         'key',

@@ -8,6 +8,7 @@ use HoangPhamDev\SimpleAdminGenerator\Console\GenerateCrudCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\InstallCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\SeedAdminCommand;
 use HoangPhamDev\SimpleAdminGenerator\Console\SeedMenuCommand;
+use HoangPhamDev\SimpleAdminGenerator\Console\SyncMenuFromJsonCommand;
 use HoangPhamDev\SimpleAdminGenerator\Http\Middleware\AuthAdmin;
 use HoangPhamDev\SimpleAdminGenerator\Services\AdminMenuManager;
 use Illuminate\Support\ServiceProvider;
@@ -43,6 +44,10 @@ class PackageServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/resources/assets' => public_path('sag'),
             ], 'assets');
+
+            $this->publishes([
+                __DIR__.'/../stubs/public/plugins/jstree' => public_path('sag/plugins/jstree'),
+            ], ['assets', 'sag-menu-assets']);
 
             $this->publishes([
                 __DIR__.'/resources/views/components/sag-form' => resource_path('views/components/sag-form'),
@@ -96,6 +101,7 @@ class PackageServiceProvider extends ServiceProvider
                 GenerateHomeControllerCommand::class,
                 SeedAdminCommand::class,
                 SeedMenuCommand::class,
+                SyncMenuFromJsonCommand::class,
             ]);
         }
     }

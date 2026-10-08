@@ -154,6 +154,11 @@ class AdminMenuKeyService
                     'key' => $newKeys[$id],
                 ]);
             }
+
+            // Bulk updates bypass model events, including when the tree is empty.
+            app(AdminMenuJsonService::class)->syncAfterCommit(
+                (new AdminMenuItem())->getConnection()
+            );
         });
     }
 
