@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Admin\Search;
+
+use HoangPhamDev\SimpleAdminGenerator\Contracts\SearchProvider;
+use Illuminate\Contracts\Auth\Authenticatable;
+
+class {{class}} implements SearchProvider
+{
+    public function label(): string
+    {
+        // TODO: Set a business-friendly, optionally translated label.
+        return {{label}};
+    }
+
+    public function search(string $keyword, Authenticatable $admin, int $limit): iterable
+    {
+        // TODO: Check permissions and tenant scope before querying data.
+        // TODO: Build the query and SearchResult DTOs with trusted detail URLs.
+        // TODO: Map all detail route parameters explicitly.
+        return [];
+    }
+}

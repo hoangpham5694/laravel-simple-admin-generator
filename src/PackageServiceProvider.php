@@ -94,6 +94,7 @@ class PackageServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
+                \HoangPhamDev\SimpleAdminGenerator\Console\GenerateSearchProviderCommand::class,
                 InstallCommand::class,
                 GenerateControllerCommand::class,
                 GenerateUiCommand::class,

@@ -8,6 +8,8 @@ use HoangPhamDev\SimpleAdminGenerator\Http\Controllers\AdminMenuController;
 Route::get('/login', [AuthController::class, 'index'])->name('sag.index');
 Route::post('/login', [AuthController::class, 'login'])->name('sag.login');
 Route::middleware(['admin'])->group(function () {
+    Route::get('/search', [\HoangPhamDev\SimpleAdminGenerator\Http\Controllers\SearchController::class, 'index'])->name('sag.search');
+    Route::get('/search/suggestions', [\HoangPhamDev\SimpleAdminGenerator\Http\Controllers\SearchController::class, 'suggestions'])->name('sag.search.suggestions');
     Route::post('/logout', [AuthController::class, 'logout'])->name('sag.logout');
     Route::get('/profile', [AuthController::class, 'profile'])->name('sag.profile');
 

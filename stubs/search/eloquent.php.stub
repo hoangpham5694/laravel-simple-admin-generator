@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Admin\Search;
+
+use HoangPhamDev\SimpleAdminGenerator\Data\SearchResult;
+use HoangPhamDev\SimpleAdminGenerator\Search\AbstractEloquentSearchProvider;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+
+class {{class}} extends AbstractEloquentSearchProvider
+{
+    public function label(): string
+    {
+        // TODO: Set a business-friendly, optionally translated label.
+        return {{label}};
+    }
+
+    protected function routeName(): string
+    {
+        {{route}}
+    }
+
+    protected function routeParameters(Model $record): array
+    {
+        {{parameters}}
+    }
+
+    public function search(string $keyword, Authenticatable $admin, int $limit): iterable
+    {
+        // TODO: Add authorization and tenant scope BEFORE registering this provider.
+        {{query}}
+    }
+}

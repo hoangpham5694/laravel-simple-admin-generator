@@ -230,3 +230,84 @@ Other
 License
 ------------
 `simple-admin-generator` is licensed under [The MIT License (MIT)](license.md).
+
+### Navbar and sidebar search
+
+Search is disabled by default. The navbar offers AJAX suggestions; the sidebar
+and results page submit a normal GET request. Both use the same registered
+providers and the `admin` guard. Existing CRUD list searches remain independent.
+
+Generate an empty provider:
+
+```bash
+php artisan sag:generate_search_provider Product
+```
+
+Or generate an Eloquent query starting point (model, columns and detail route
+must already exist):
+
+```bash
+php artisan sag:generate_search_provider Product \
+  --model='App\Models\Product' --columns=name,sku --title=name \
+  --route=sag.product.detail --route-parameter=product
+```
+
+The command creates `app/Admin/Search/ProductSearchProvider.php`. Complete its
+label, authorization and tenant scope **before registering it**. Providers
+receive the authenticated admin, trimmed keyword and result limit. They return
+`SearchResult` DTOs; the manager attaches each provider's nonempty `label()`.
+Queries must filter permissions/tenant before fetching records. Detail pages
+must enforce their own authorization too. The generated LIKE query retains
+model global scopes and groups OR conditions; assess performance on real data.
+
+Add this to `config/sag.php`:
+
+```php
+'search' => [
+    'enabled' => true,
+    'providers' => [App\Admin\Search\ProductSearchProvider::class],
+    'min_length' => 2,
+    'max_length' => 200,
+    'limit_per_provider' => 10,
+    'suggestions' => [
+        'enabled' => true,
+        'debounce_ms' => 300,
+        'limit_per_provider' => 3,
+        'max_results' => 10,
+    ],
+],
+```
+
+Include the complete search configuration when using an existing published
+config. Empty providers or disabled search hide both forms and return 404 from
+search endpoints. Disabling only suggestions preserves GET search. Routes
+`sag.search` and `sag.search.suggestions` follow the configured SAG prefix and
+middleware. Invalid queries return 422; unauthenticated JSON requests return 401.
+
+Providers may implement `Contracts\SearchProvider` directly for API sources, or
+extend `Search\AbstractEloquentSearchProvider` and declare `routeName()` and
+`routeParameters()`. Use model objects to respect custom route keys, or explicit
+column values for binding fields such as `{product:slug}`. The generator handles
+one route placeholder automatically; multi-parameter routes produce an inert
+skeleton requiring explicit mapping. Missing query options also produce an
+empty skeleton. Invalid model/column/route options fail before writing.
+`--force` is required to overwrite a provider. The command never edits config,
+models, routes or migrations.
+
+Result links accept local absolute paths and HTTP(S) URLs. Titles, descriptions
+and provider labels are escaped. Results are a single list ordered by provider
+configuration, limited per provider, without pagination or relevance ranking.
+The application can override the results view at
+`resources/views/vendor/sag/search/index.blade.php`.
+
+After upgrading, republish assets and review published layout overrides:
+
+```bash
+php artisan vendor:publish --tag=assets --force
+php artisan vendor:publish --tag=sag-layouts --force
+```
+
+Back up customized layouts before republishing. Applications using generated
+`resources/views/sag/layouts` should copy the updated navbar/sidebar form markup
+and include `sag/js/navbar-search.js` once in their app layout. The source and
+layout stubs both include the integration; sidebar typing does not send AJAX.

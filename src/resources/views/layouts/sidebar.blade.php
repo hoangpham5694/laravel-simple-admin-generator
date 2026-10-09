@@ -8,17 +8,16 @@
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
 
-        <!-- SidebarSearch Form -->
-        <div class="form-inline">
-            <div class="input-group" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+        @if (\HoangPhamDev\SimpleAdminGenerator\Services\SearchManager::enabled())
+        <form class="form-inline" method="GET" action="{{ route('sag.search') }}" data-sag-sidebar-search>
+            <div class="input-group">
+                <input class="form-control form-control-sidebar" type="search" name="q" placeholder="Search" aria-label="Search" value="{{ is_string(request()->query('q')) ? request()->query('q') : '' }}">
                 <div class="input-group-append">
-                    <button class="btn btn-sidebar">
-                        <i class="fas fa-search fa-fw"></i>
-                    </button>
+                    <button class="btn btn-sidebar" type="submit" aria-label="Search"><i class="fas fa-search fa-fw"></i></button>
                 </div>
             </div>
-        </div>
+        </form>
+        @endif
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">

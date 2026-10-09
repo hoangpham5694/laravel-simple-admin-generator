@@ -9,29 +9,28 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-        <!-- Navbar Search -->
-        <li class="nav-item">
-            <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                <i class="fas fa-search"></i>
-            </a>
+        @if (\HoangPhamDev\SimpleAdminGenerator\Services\SearchManager::enabled())
+        <li class="nav-item" data-sag-navbar-search>
+            <a class="nav-link" data-widget="navbar-search" href="#" role="button" aria-label="Open search"><i class="fas fa-search"></i></a>
             <div class="navbar-search-block">
-                <form class="form-inline">
+                <form class="form-inline" method="GET" action="{{ route('sag.search') }}" style="position: relative">
                     <div class="input-group input-group-sm">
-                        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+                        <input class="form-control form-control-navbar" type="search" name="q" placeholder="Search" aria-label="Search" value="{{ is_string(request()->query('q')) ? request()->query('q') : '' }}"
+                            @if (config('sag.search.suggestions.enabled', true))
+                            data-sag-search-input data-url="{{ route('sag.search.suggestions') }}" data-min-length="{{ config('sag.search.min_length', 2) }}" data-max-length="{{ config('sag.search.max_length', 200) }}" data-debounce="{{ config('sag.search.suggestions.debounce_ms', 300) }}" aria-controls="sag-search-suggestions" aria-expanded="false" autocomplete="off"
+                            @endif>
                         <div class="input-group-append">
-                            <button class="btn btn-navbar" type="submit">
-                                <i class="fas fa-search"></i>
-                            </button>
-                            <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                                <i class="fas fa-times"></i>
-                            </button>
+                            <button class="btn btn-navbar" type="submit" aria-label="Search"><i class="fas fa-search"></i></button>
+                            <button class="btn btn-navbar" type="button" data-widget="navbar-search" aria-label="Close search"><i class="fas fa-times"></i></button>
                         </div>
                     </div>
+                    @if (config('sag.search.suggestions.enabled', true))
+                    <div id="sag-search-suggestions" data-sag-search-results class="bg-white border rounded shadow" hidden aria-live="polite" style="position:absolute;top:100%;left:0;right:0;max-height:65vh;overflow:auto;z-index:1050"></div>
+                    @endif
                 </form>
             </div>
         </li>
-
-
+        @endif
 
         <!-- Notifications Dropdown Menu -->
         <li class="nav-item dropdown">

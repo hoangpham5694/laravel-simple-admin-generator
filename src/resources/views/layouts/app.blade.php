@@ -96,6 +96,7 @@
         })
     })
 </script>
+<script src="{{ asset('sag/js/navbar-search.js') }}" defer></script>
 @stack('script')
 
 </body>
